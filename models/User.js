@@ -58,6 +58,7 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    workedAt: [{ type: mongoose.Schema.ObjectId, ref: 'Company' }]
 });
 
 
