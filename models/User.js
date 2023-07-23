@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+// const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
             /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, //Minimum six characters, at least one letter and one number
             "Please provide a valid password",
         ],
-        select: false,
+        select: true,
     },
     passwordConfirm: {
         type: String,
@@ -61,6 +61,12 @@ const userSchema = new mongoose.Schema({
     workedAt: [{ type: mongoose.Schema.ObjectId, ref: 'Company' }]
 });
 
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    // Hashing user password
+    this.password = bcrypt.hash(this.password, 12);
+    next();
+});
 
 
 const User = mongoose.model('User', userSchema);
